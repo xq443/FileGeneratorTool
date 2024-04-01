@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="jacocoagent">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/build/tmp/.cache/expanded/zip_cde35f471dab581134460fc9a50e2c59/jacocoagent.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
