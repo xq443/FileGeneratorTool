@@ -28,15 +28,11 @@ public class PlaceholderReplace {
   public void generateFiles() {
     if (isEmail != null) {
       generateEmails();
-      if (allEmailsSuccessfully) {
-        System.out.println("All emails were successfully generated.");
-      }
+      if (allEmailsSuccessfully) System.out.println("All emails were successfully generated.");
     }
     if (isLetter != null) {
       generateLetters();
-      if (allLettersSuccessfully) {
-        System.out.println("All letters were successfully generated.");
-      }
+      if (allLettersSuccessfully) System.out.println("All letters were successfully generated.");
     }
   }
   public void generateEmails() {
