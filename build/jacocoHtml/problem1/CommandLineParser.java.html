@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CommandLineParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">HW8</a> &gt; <a href="index.source.html" class="el_package">problem1</a> &gt; <span class="el_source">CommandLineParser.java</span></div><h1>CommandLineParser.java</h1><pre class="source lang-java linenums">package problem1;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+public class CommandLineParser {
+
+  private final String[] args;
+<span class="nc" id="L11">  private boolean ifLetter = false;</span>
+<span class="nc" id="L12">  private boolean ifEmail = false;</span>
+
+  // Legal commands set
+<span class="nc" id="L15">  private static final Set&lt;String&gt; LEGAL_COMMANDS = Set.of(</span>
+      &quot;--email-template&quot;, &quot;--letter-template&quot;,
+      &quot;--output-dir&quot;, &quot;--csv-file&quot;,
+      &quot;--letter&quot;, &quot;--email&quot;
+  );
+
+  // constructor
+<span class="nc" id="L22">  public CommandLineParser(String[] args) throws IllegalCommandException {</span>
+//    if (!validateArguments(args)) {
+//      throw new IllegalArgumentException(&quot;Invalid command line arguments.&quot;);
+//    }
+<span class="nc" id="L26">    this.args = args;</span>
+<span class="nc" id="L27">  }</span>
+
+
+  public boolean validateArguments(String[] args) throws IllegalCommandException {
+    // Check if each argument follows the expected format
+<span class="nc bnc" id="L32" title="All 2 branches missed.">    for (String arg : args) {</span>
+<span class="nc bnc" id="L33" title="All 4 branches missed.">      if (!isValidFormat(arg) || !checkIllegalCommand(arg)) {</span>
+<span class="nc" id="L34">        return false;</span>
+      }
+    }
+<span class="nc" id="L37">    return true;</span>
+  }
+
+  boolean isValidFormat(String value) {
+    // Expression pattern for file paths
+<span class="nc" id="L42">    String pathPattern = &quot;([\\w.]+/(\\w+/)*)&quot;;</span>
+    // Expression pattern for file extensions
+<span class="nc" id="L44">    String extensionPattern = &quot;\\.((csv)|(txt))$&quot;;</span>
+<span class="nc bnc" id="L45" title="All 4 branches missed.">    return Pattern.matches(pathPattern, value) &amp;&amp; Pattern.matches(extensionPattern, value);</span>
+  }
+
+  private boolean checkIllegalCommand(String arg) throws IllegalCommandException {
+<span class="nc bnc" id="L49" title="All 2 branches missed.">      if (!LEGAL_COMMANDS.contains(arg) ){</span>
+<span class="nc" id="L50">        throw new IllegalCommandException(arg + &quot; is not a legal command.&quot;);</span>
+      }
+<span class="nc" id="L52">    return true;</span>
+  }
+
+
+  public Map&lt;String, String&gt; parseArguments() {
+<span class="nc" id="L57">    Map&lt;String, String&gt; arguments = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L58">    boolean emailTemplatePresent = false;</span>
+<span class="nc" id="L59">    boolean letterTemplatePresent = false;</span>
+<span class="nc" id="L60">    boolean outputDirPresent = false;</span>
+<span class="nc" id="L61">    boolean csvFilePresent = false;</span>
+
+
+<span class="nc bnc" id="L64" title="All 2 branches missed.">    for (int i = 0; i &lt; args.length; i++) {</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">      if (args[i].startsWith(&quot;--&quot;)) {</span>
+<span class="nc" id="L66">        String key = args[i].substring(2); // ignore --</span>
+<span class="nc" id="L67">        String value = null;</span>
+
+        // change the flags if possible
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        if (key.equals(&quot;email-template&quot;)) {</span>
+<span class="nc" id="L71">          emailTemplatePresent = true;</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        } else if (key.equals(&quot;letter-template&quot;)) {</span>
+<span class="nc" id="L73">          letterTemplatePresent = true;</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        } else if (key.equals(&quot;output-dir&quot;)) {</span>
+<span class="nc" id="L75">          outputDirPresent = true;</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        } else if (key.equals(&quot;csv-file&quot;)) {</span>
+<span class="nc" id="L77">          csvFilePresent = true;</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        } else if (key.equals(&quot;letter&quot;)) {</span>
+<span class="nc" id="L79">          ifLetter = true;</span>
+<span class="nc" id="L80">          continue;</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        } else if (key.equals(&quot;email&quot;)) {</span>
+<span class="nc" id="L82">          ifEmail = true;</span>
+<span class="nc" id="L83">          continue;</span>
+        }
+        // extract the value
+<span class="nc bnc" id="L86" title="All 4 branches missed.">        if (i &lt; args.length - 1 &amp;&amp; !args[i + 1].startsWith(&quot;-&quot;)) {</span>
+<span class="nc" id="L87">            value = args[i + 1];</span>
+<span class="nc" id="L88">            i++;</span>
+        }
+<span class="nc" id="L90">        arguments.put(key, value);</span>
+        }
+      }
+
+
+    // Check if the required options are present together
+<span class="nc bnc" id="L96" title="All 4 branches missed.">    if (ifEmail &amp;&amp; !emailTemplatePresent) {</span>
+      //todo exception class
+<span class="nc" id="L98">      System.err.println(&quot;Error: --email provided but no --email-template was given.&quot;);</span>
+<span class="nc" id="L99">      return null;</span>
+    }
+
+<span class="nc bnc" id="L102" title="All 4 branches missed.">    if (ifLetter &amp;&amp; !letterTemplatePresent) {</span>
+      //todo exception class
+<span class="nc" id="L104">      System.err.println(&quot;Error: --letter provided but no --letter-template was given.&quot;);</span>
+<span class="nc" id="L105">      return null;</span>
+    }
+
+<span class="nc bnc" id="L108" title="All 2 branches missed.">    if (!outputDirPresent) {</span>
+      //todo exception class
+<span class="nc" id="L110">      System.err.println(&quot;Error: --output-dir is required.&quot;);</span>
+<span class="nc" id="L111">      return null;</span>
+    }
+
+<span class="nc bnc" id="L114" title="All 2 branches missed.">    if (!csvFilePresent) {</span>
+      //todo exception class
+<span class="nc" id="L116">      System.err.println(&quot;Error: --csv-file is required.&quot;);</span>
+<span class="nc" id="L117">      return null;</span>
+    }
+<span class="nc" id="L119">    return arguments;</span>
+  }
+
+  public boolean isIfLetter() {
+<span class="nc" id="L123">    return ifLetter;</span>
+  }
+
+  public boolean isIfEmail() {
+<span class="nc" id="L127">    return ifEmail;</span>
+  }
+
+  public static void main(String[] args) {
+      try {
+<span class="nc" id="L132">        CommandLineParser parser = new CommandLineParser(args);</span>
+<span class="nc" id="L133">        Map&lt;String, String&gt; arguments = parser.parseArguments();</span>
+<span class="nc" id="L134">        printArguments(arguments, parser);</span>
+<span class="nc" id="L135">      } catch (IllegalCommandException e) {</span>
+<span class="nc" id="L136">        System.err.println(&quot;Error: &quot; + e.getMessage());</span>
+<span class="nc" id="L137">      }</span>
+<span class="nc" id="L138">  }</span>
+
+
+  private static void printArguments(Map&lt;String, String&gt; arguments, CommandLineParser parser) {
+<span class="nc" id="L142">    System.out.println(&quot;Parsed Arguments:&quot;);</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">    for (Map.Entry&lt;String, String&gt; entry : arguments.entrySet()) {</span>
+<span class="nc" id="L144">      System.out.println(entry.getKey() + &quot;: &quot; + entry.getValue());</span>
+<span class="nc" id="L145">    }</span>
+<span class="nc" id="L146">    System.out.println(&quot;ifLetter: &quot; + parser.isIfLetter());</span>
+<span class="nc" id="L147">    System.out.println(&quot;ifEmail: &quot; + parser.isIfEmail());</span>
+<span class="nc" id="L148">  }</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
