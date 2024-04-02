@@ -1,5 +1,7 @@
 package Util;
 
+import static Common.Constants.CSV_PATTERN;
+
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -16,10 +18,8 @@ public class CSVReader {
    *
    * @param filePath The path to the CSV file
    * @return List of maps representing CSV data
-   * @throws IOException If an I/O error occurs while reading the file
    */
 
-  public static final Pattern CSV_PATTERN = Pattern.compile("\"([^\"]*)\"");
   public List<Map<String, String>> readCSV(String filePath) {
     List<Map<String, String>> csvData = new ArrayList<>();
     BufferedReader reader = null; // declare reader outside try block
@@ -34,8 +34,6 @@ public class CSVReader {
           if (values.length == headers.length) {
             Map<String, String> rowData = new HashMap<>();
             for (int i = 0; i < headers.length; i++) {
-              //String header = headers[i].replace("\"", "");
-              //String value = values[i].replace("\"", "");
               rowData.put(headers[i], values[i]);
             }
             csvData.add(rowData);
@@ -66,8 +64,6 @@ public class CSVReader {
     return values.toArray(new String[0]);
   }
   public static void main(String[] args) {
-//    String absoluteFilePath = "/Users/cathyqin/Desktop/insurance-company-members.csv";
-//    String relativePath = "src/resources/insurance-company-members.csv";
     try{
       if (args.length != 1) {
         throw new IllegalArgumentException(
@@ -77,29 +73,14 @@ public class CSVReader {
       List<Map<String, String>> csvData = csvReader.readCSV(args[0]);
 
       for (Map<String, String> rowData : csvData) {
-
           System.out.println("Test Row:");
           for (Map.Entry<String, String> entry : rowData.entrySet()) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
           }
           System.out.println();
-
       }
     } catch (Exception e){
       System.err.println(e.getMessage());
     }
   }
 }
-//Row:
-//"company_name": "Feltz Printing Service"
-//"address": "639 Main St"
-//"state": "AK"
-//"email": "lpaprocki@hotmail.com"
-//"first_name": "Lenna"
-//"phone1": "907-385-4412"
-//"phone2": "907-921-2010"
-//"web": "http://www.feltzprintingservice.com"
-//"county": "Anchorage"
-//"last_name": "Paprocki"
-//"zip": "99501"
-//"city": "Anchorage"
