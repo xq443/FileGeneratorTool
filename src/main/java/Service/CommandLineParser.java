@@ -13,6 +13,7 @@ import static Common.Constants.OUTPUT_DIR_PATTERN;
 import static Common.Constants.TXT_FILE_PATH_PATTERN;
 
 
+import Common.Constants;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,13 +30,16 @@ public class CommandLineParser {
    */
   private String[] args;
   private Map<String, String> arguments;
-  private static final Set<String> LEGAL_COMMANDS = Set.of(
+  private static final Set<String> LEGAL_INPUT = Set.of(
       CommandsEnum.EMAIL_TEMPLATE_COMMAND.getCommandString(),
       CommandsEnum.LETTER_TEMPLATE_COMMAND.getCommandString(),
       CommandsEnum.OUTPUT_DIR_COMMAND.getCommandString(),
       CommandsEnum.CSV_FILE_COMMAND.getCommandString(),
       CommandsEnum.LETTER_TYPE_COMMAND.getCommandString(),
-      CommandsEnum.EMAIL_TYPE_COMMAND.getCommandString()
+      CommandsEnum.EMAIL_TYPE_COMMAND.getCommandString(),
+      CSV_FILE_PATH_PATTERN,
+      TXT_FILE_PATH_PATTERN,
+      OUTPUT_DIR_PATTERN
   );
 
 
@@ -76,6 +80,7 @@ public class CommandLineParser {
 
     for (String arg : args) {
       if (arg.startsWith("--")) {
+        validateCommands(arg);
         CommandsEnum command = CommandsEnum.fromCommandString(arg);
         switch (command) {
           case EMAIL_TYPE_COMMAND -> isEmail = true;
@@ -91,18 +96,16 @@ public class CommandLineParser {
     for (int i = 0; i < args.length; i++) {
       String key = args[i];
       String value = null;
-
       if (key.startsWith("--")) {
         if (i < args.length - 1 && !args[i + 1].startsWith("--")) {
           value = args[i + 1];
           i++;
         }
-        validateLegalCommand(key);
         arguments.put(key, value);
-        validateRegex(key, value);
+        validateEntries(key, value);
       } else{
-        throw new IllegalCommandException("Should provide legal pairs of commands and argument:  "
-            + "near " + key);
+        throw new InvalidCommandException("Should provide with valid pairs of "
+            + "command and argument: " + key);
       }
     }
     validateCommandOptions(isEmail, isEmailTemplate,
@@ -118,7 +121,7 @@ public class CommandLineParser {
    * @param value The command value
    * @throws InvalidCommandException If the command value is invalid or missing
    */
-  private void validateRegex(String key, String value) throws InvalidCommandException {
+  private void validateEntries(String key, String value) throws InvalidCommandException {
     CommandsEnum command = CommandsEnum.fromCommandString(key);
     switch (command) {
       case EMAIL_TYPE_COMMAND, LETTER_TYPE_COMMAND -> arguments.put(key, "true");
@@ -172,8 +175,8 @@ public class CommandLineParser {
    *
    * @param arg The command to validate
    */
-  private void validateLegalCommand(String arg) throws IllegalCommandException {
-    if (!LEGAL_COMMANDS.contains(arg)) {
+  private void validateCommands(String arg) throws IllegalCommandException {
+    if (!LEGAL_INPUT.contains(arg)) {
       throw new IllegalCommandException("Not a legal command");
     }
   }
