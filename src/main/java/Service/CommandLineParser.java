@@ -76,7 +76,6 @@ public class CommandLineParser {
 
     for (String arg : args) {
       if (arg.startsWith("--")) {
-        validateLegalCommand(arg);
         CommandsEnum command = CommandsEnum.fromCommandString(arg);
         switch (command) {
           case EMAIL_TYPE_COMMAND -> isEmail = true;
@@ -98,10 +97,16 @@ public class CommandLineParser {
           value = args[i + 1];
           i++;
         }
-        parseKeyAndValue(key, value);
+        validateLegalCommand(key);
+        arguments.put(key, value);
+        validateRegex(key, value);
+      } else{
+        throw new IllegalCommandException("Should provide legal pairs of commands and argument:  "
+            + "near " + key);
       }
     }
-    validateCommandOptions(isEmail, isEmailTemplate, isLetter, isLetterTemplate,
+    validateCommandOptions(isEmail, isEmailTemplate,
+        isLetter, isLetterTemplate,
         isOutDir, isCSVFile);
   }
 
@@ -113,7 +118,7 @@ public class CommandLineParser {
    * @param value The command value
    * @throws InvalidCommandException If the command value is invalid or missing
    */
-  private void parseKeyAndValue(String key, String value) throws InvalidCommandException {
+  private void validateRegex(String key, String value) throws InvalidCommandException {
     CommandsEnum command = CommandsEnum.fromCommandString(key);
     switch (command) {
       case EMAIL_TYPE_COMMAND, LETTER_TYPE_COMMAND -> arguments.put(key, "true");
@@ -126,7 +131,6 @@ public class CommandLineParser {
           throw new InvalidCommandException(
               "Input email template file path should be in the right format");
         }
-        arguments.put(key, value);
       }
       case LETTER_TEMPLATE_COMMAND -> {
         if (value == null) {
@@ -137,7 +141,6 @@ public class CommandLineParser {
           throw new InvalidCommandException(
               "Input letter template file path should be in the right format");
         }
-        arguments.put(key, value);
       }
       case OUTPUT_DIR_COMMAND -> {
         if (value == null) {
@@ -148,7 +151,6 @@ public class CommandLineParser {
           throw new InvalidCommandException(OUTPUT_DIR_COMMAND +
               " provided but output directory should be in the right format.");
         }
-        arguments.put(key, value);
       }
       case CSV_FILE_COMMAND -> {
         if (value == null) {
@@ -159,7 +161,6 @@ public class CommandLineParser {
           throw new InvalidCommandException("Valid CSV file directory provided but no valid "
               + CSV_FILE_COMMAND + " was given.");
         }
-        arguments.put(key, value);
       }
     }
   }
@@ -169,10 +170,10 @@ public class CommandLineParser {
    * if it is from the LEGAL_COMMNAD_SET
    * if the command starts with "--" with no empty space
    *
-   * @param key The command to validate
+   * @param arg The command to validate
    */
-  private void validateLegalCommand(String key) throws IllegalCommandException {
-    if (!LEGAL_COMMANDS.contains(key)) {
+  private void validateLegalCommand(String arg) throws IllegalCommandException {
+    if (!LEGAL_COMMANDS.contains(arg)) {
       throw new IllegalCommandException("Not a legal command");
     }
   }
