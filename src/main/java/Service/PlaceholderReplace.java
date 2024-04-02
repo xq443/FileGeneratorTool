@@ -43,7 +43,7 @@ public class PlaceholderReplace {
       }
     } catch (Exception e){
       emailsFail = true;
-      throw new IOException("Error generating email: " + e.getMessage());
+      throw new IOException("Error generating files: " + e.getMessage());
     } finally {
       if(!emailsFail) System.out.println("All emails are generated successfully.");
     }
@@ -61,7 +61,7 @@ public class PlaceholderReplace {
       }
     } catch (Exception e) {
       lettersFail = true;
-      throw new IOException("Error generating letter: " + e.getMessage());
+      throw new IOException("Error generating files: " + e.getMessage());
     } finally {
       if(!lettersFail) System.out.println("All letters are generated successfully.");
     }

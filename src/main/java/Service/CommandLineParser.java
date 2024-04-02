@@ -13,6 +13,7 @@ import static Common.Constants.OUTPUT_DIR_PATTERN;
 import static Common.Constants.TXT_FILE_PATH_PATTERN;
 
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -45,15 +46,13 @@ public class CommandLineParser {
    *
    * @param args Command-line arguments to parse
    */
-  public CommandLineParser(String[] args) {
+  public CommandLineParser(String[] args) throws IOException {
     try {
       this.args = args;
       this.arguments = new HashMap<>();
       parseArguments();
     } catch (IllegalCommandException | InvalidCommandException e) {
-      System.err.println("Error： " + e.getMessage());
-      System.err.println(DEFAULT_ERROR_MESSAGE);
-      this.arguments = null;
+      throw new IOException("Error： " + e.getMessage() + "\n" + DEFAULT_ERROR_MESSAGE);
     }
   }
 

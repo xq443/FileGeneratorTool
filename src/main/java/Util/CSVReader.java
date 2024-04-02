@@ -20,7 +20,7 @@ public class CSVReader {
    * @return List of maps representing CSV data
    */
 
-  public List<Map<String, String>> readCSV(String filePath) {
+  public List<Map<String, String>> readCSV(String filePath) throws IOException {
     List<Map<String, String>> csvData = new ArrayList<>();
     BufferedReader reader = null; // declare reader outside try block
     try {
@@ -41,9 +41,9 @@ public class CSVReader {
         }
       }
     } catch (FileNotFoundException e) {
-      System.out.println("The CSV file was not found : " + e.getMessage());
+      throw new IOException("The CSV file was not found : " + e.getMessage());
     } catch (IOException e) {
-      System.err.println("Error reading CSV file: " + e.getMessage());
+      throw new IOException("Error reading CSV file: " + e.getMessage());
     } finally {
       if (reader != null) {
         try {
