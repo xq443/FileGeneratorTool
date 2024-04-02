@@ -50,7 +50,7 @@ public class CommandLineParser {
       this.args = args;
       this.arguments = new HashMap<>();
       parseArguments();
-    } catch (IllegalCommandException | InvalidCommandException | NoSuchMatchException e) {
+    } catch (IllegalCommandException | InvalidCommandException e) {
       System.err.println("Error： " + e.getMessage());
       System.err.println(DEFAULT_ERROR_MESSAGE);
       this.arguments = null;
@@ -63,9 +63,8 @@ public class CommandLineParser {
    *
    * @throws IllegalCommandException If an illegal command is encountered
    * @throws InvalidCommandException If a command has invalid arguments or format
-   * @throws NoSuchMatchException    If a command does not match any legal commands
    */
-  private void parseArguments() throws IllegalCommandException, NoSuchMatchException, InvalidCommandException {
+  private void parseArguments() throws IllegalCommandException, InvalidCommandException {
     if (args == null || args.length == 0) {
       throw new IllegalCommandException("Empty input command line");
     }
@@ -172,11 +171,10 @@ public class CommandLineParser {
    * if the command starts with "--" with no empty space
    *
    * @param key The command to validate
-   * @throws NoSuchMatchException If the command is not a legal command
    */
-  private void validateLegalCommand(String key) throws NoSuchMatchException {
+  private void validateLegalCommand(String key) throws IllegalCommandException {
     if (!LEGAL_COMMANDS.contains(key)) {
-      throw new NoSuchMatchException("Not a legal command");
+      throw new IllegalCommandException("Not a legal command");
     }
   }
 
