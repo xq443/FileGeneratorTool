@@ -13,6 +13,9 @@ public class PlaceholderReplace {
   private final String outputDir;
   private final String isEmail;
   private final String isLetter;
+  private boolean emailAllSuccess = false;
+  private boolean letterAllSuccess = false;
+
 
   public PlaceholderReplace(String isEmail, String emailTemplatePath, String isLetter,
       String letterTemplatePath, String outputDir, List<Map<String, String>> csvData) {
@@ -23,11 +26,24 @@ public class PlaceholderReplace {
     this.isEmail = isEmail;
     this.isLetter = isLetter;
   }
-  public void generateFiles() {
-    if (isEmail != null) generateEmails();
-    if (isLetter != null) generateLetters();
+  public void generateFiles()  {
+    if (isEmail != null) {
+      try{
+        generateEmails();
+      } catch (IOException e) {
+        System.err.println(e.getMessage());
+      }
+    }
+    if (isLetter != null) {
+      try {
+        generateLetters();
+        //System.out.println("Letters are all successfully generated.");
+      } catch (IOException e) {
+        System.err.println(e.getMessage());
+      }
+    }
   }
-  public void generateEmails() {
+  public void generateEmails() throws IOException {
     try {
       String emailTemplate = TextReader.readTextFileToString(emailTemplatePath);
       for (Map<String, String> rowData : csvData) {
@@ -37,11 +53,11 @@ public class PlaceholderReplace {
         FileOutputWriter.writeToFile(outputDir, generatedEmail, recipientId);
       }
     } catch (Exception e){
-      System.err.println("Error generating email: " + e.getMessage());
+      throw new IOException("Error generating email: " + e.getMessage());
     }
   }
 
-  public void generateLetters() {
+  public void generateLetters() throws IOException {
     try {
       String letterTemplate = TextReader.readTextFileToString(letterTemplatePath);
       for (Map<String, String> rowData : csvData) {
@@ -51,7 +67,7 @@ public class PlaceholderReplace {
         FileOutputWriter.writeToFile(outputDir, generatedLetter, recipientId);
       }
     } catch (Exception e) {
-      System.err.println("Error generating letter: " + e.getMessage());
+      throw new IOException("Error generating letter: " + e.getMessage());
     }
   }
 
