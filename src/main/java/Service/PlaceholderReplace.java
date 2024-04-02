@@ -13,9 +13,6 @@ public class PlaceholderReplace {
   private final String outputDir;
   private final String isEmail;
   private final String isLetter;
-  private boolean emailAllSuccess = false;
-  private boolean letterAllSuccess = false;
-
 
   public PlaceholderReplace(String isEmail, String emailTemplatePath, String isLetter,
       String letterTemplatePath, String outputDir, List<Map<String, String>> csvData) {
@@ -26,24 +23,16 @@ public class PlaceholderReplace {
     this.isEmail = isEmail;
     this.isLetter = isLetter;
   }
-  public void generateFiles()  {
-    if (isEmail != null) {
-      try{
-        generateEmails();
-      } catch (IOException e) {
-        System.err.println(e.getMessage());
-      }
-    }
-    if (isLetter != null) {
-      try {
-        generateLetters();
-        //System.out.println("Letters are all successfully generated.");
-      } catch (IOException e) {
-        System.err.println(e.getMessage());
-      }
+  public void generateFiles() throws IOException {
+    try {
+      if(isEmail != null) generateEmails();
+      if(isLetter != null) generateLetters();
+    } catch (IOException e){
+      throw new IOException(e.getMessage());
     }
   }
   public void generateEmails() throws IOException {
+    boolean emailsFail = false;
     try {
       String emailTemplate = TextReader.readTextFileToString(emailTemplatePath);
       for (Map<String, String> rowData : csvData) {
@@ -53,11 +42,15 @@ public class PlaceholderReplace {
         FileOutputWriter.writeToFile(outputDir, generatedEmail, recipientId);
       }
     } catch (Exception e){
+      emailsFail = true;
       throw new IOException("Error generating email: " + e.getMessage());
+    } finally {
+      if(!emailsFail) System.out.println("All emails are generated successfully.");
     }
   }
 
   public void generateLetters() throws IOException {
+    boolean lettersFail = false;
     try {
       String letterTemplate = TextReader.readTextFileToString(letterTemplatePath);
       for (Map<String, String> rowData : csvData) {
@@ -67,7 +60,10 @@ public class PlaceholderReplace {
         FileOutputWriter.writeToFile(outputDir, generatedLetter, recipientId);
       }
     } catch (Exception e) {
+      lettersFail = true;
       throw new IOException("Error generating letter: " + e.getMessage());
+    } finally {
+      if(!lettersFail) System.out.println("All letters are generated successfully.");
     }
   }
 

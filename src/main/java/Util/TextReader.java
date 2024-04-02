@@ -17,9 +17,9 @@ public class TextReader {
         contentBuilder.append(line).append("\n");
       }
     } catch (FileNotFoundException e) {
-      System.out.println("The template text file was not found : " + e.getMessage());
+      throw new RuntimeException("The template text file was not found : " + e.getMessage());
     } catch (IOException e) {
-      System.err.println("Error reading text file: " + e.getMessage());
+      throw new RuntimeException("Error reading text file: " + e.getMessage());
     } finally {
       try {
         if (reader != null) {
