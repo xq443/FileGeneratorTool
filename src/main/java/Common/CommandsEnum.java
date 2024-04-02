@@ -1,6 +1,6 @@
-package Enum;
+package Common;
 
-public enum Commands {
+public enum CommandsEnum {
   EMAIL_TYPE_COMMAND("--email"),
   EMAIL_TEMPLATE_COMMAND("--email-template"),
   LETTER_TYPE_COMMAND("--letter"),
@@ -10,12 +10,12 @@ public enum Commands {
 
   private final String commandString;
 
-  Commands(String commandString) {
+  CommandsEnum(String commandString) {
     this.commandString = commandString;
   }
 
-  public static Commands fromCommandString(String commandString) {
-    for (Commands command : Commands.values()) {
+  public static CommandsEnum fromCommandString(String commandString) {
+    for (CommandsEnum command : CommandsEnum.values()) {
       if (command.getCommandString().equals(commandString)) {
         return command;
       }

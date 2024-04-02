@@ -1,22 +1,23 @@
-package Processor;
+package Service;
 
 
-import static Enum.Commands.CSV_FILE_COMMAND;
-import static Enum.Commands.EMAIL_TEMPLATE_COMMAND;
-import static Enum.Commands.EMAIL_TYPE_COMMAND;
-import static Enum.Commands.LETTER_TEMPLATE_COMMAND;
-import static Enum.Commands.LETTER_TYPE_COMMAND;
-import static Enum.Commands.OUTPUT_DIR_COMMAND;
-import static Enum.Path.CSV_FILE_PATH_PATTERN;
-import static Enum.Path.OUTPUT_DIR_PATTERN;
-import static Enum.Path.TXT_FILE_PATH_PATTERN;
+import static Common.CommandsEnum.CSV_FILE_COMMAND;
+import static Common.CommandsEnum.EMAIL_TEMPLATE_COMMAND;
+import static Common.CommandsEnum.EMAIL_TYPE_COMMAND;
+import static Common.CommandsEnum.LETTER_TEMPLATE_COMMAND;
+import static Common.CommandsEnum.LETTER_TYPE_COMMAND;
+import static Common.CommandsEnum.OUTPUT_DIR_COMMAND;
+import static Common.Constants.CSV_FILE_PATH_PATTERN;
+import static Common.Constants.DEFAULT_ERROR_MESSAGE;
+import static Common.Constants.OUTPUT_DIR_PATTERN;
+import static Common.Constants.TXT_FILE_PATH_PATTERN;
 
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
-import Enum.Commands;
+import Common.CommandsEnum;
 import Exception.*;
 
 public class CommandLineParser {
@@ -28,21 +29,14 @@ public class CommandLineParser {
   private String[] args;
   private Map<String, String> arguments;
   private static final Set<String> LEGAL_COMMANDS = Set.of(
-      Commands.EMAIL_TEMPLATE_COMMAND.getCommandString(),
-      Commands.LETTER_TEMPLATE_COMMAND.getCommandString(),
-      Commands.OUTPUT_DIR_COMMAND.getCommandString(),
-      Commands.CSV_FILE_COMMAND.getCommandString(),
-      Commands.LETTER_TYPE_COMMAND.getCommandString(),
-      Commands.EMAIL_TYPE_COMMAND.getCommandString()
+      CommandsEnum.EMAIL_TEMPLATE_COMMAND.getCommandString(),
+      CommandsEnum.LETTER_TEMPLATE_COMMAND.getCommandString(),
+      CommandsEnum.OUTPUT_DIR_COMMAND.getCommandString(),
+      CommandsEnum.CSV_FILE_COMMAND.getCommandString(),
+      CommandsEnum.LETTER_TYPE_COMMAND.getCommandString(),
+      CommandsEnum.EMAIL_TYPE_COMMAND.getCommandString()
   );
-  private static final String DEFAULT_ERROR_MESSAGE = "\nUsage：" +
-      "\n--email Generate email messages. If this option is provided, then --email-template must also be provided." +
-      "\n--email-template <path/to/file> A filename for the email template. --letter Generate letters. If this option is provided, then --letter-template must also be provided." +
-      "\n--letter-template <path/to/file> A filename for the letter template. --output-dir <path/to/folder> The folder to store all generated files. This option is required." +
-      "\n--csv-file <path/to/folder> The CSV file to process. This option is required." +
-      "\n\nExamples：" +
-      "\n--email --email-template email-template.txt --output-dir emails --csv-file customer.csv" +
-      "\n--letter --letter-template letter-template.txt --output-dir letters --csv-file customer.csv";
+
 
   /**
    * Constructs a CommandLineParserV2 object with given command-line arguments.
@@ -85,7 +79,7 @@ public class CommandLineParser {
     for (String arg : args) {
       if (arg.startsWith("--")) {
         validateLegalCommand(arg);
-        Commands command = Commands.fromCommandString(arg);
+        CommandsEnum command = CommandsEnum.fromCommandString(arg);
         switch (command) {
           case EMAIL_TYPE_COMMAND -> isEmail = true;
           case EMAIL_TEMPLATE_COMMAND -> isEmailTemplate = true;
@@ -122,7 +116,7 @@ public class CommandLineParser {
    * @throws InvalidCommandException If the command value is invalid or missing
    */
   private void parseKeyAndValue(String key, String value) throws InvalidCommandException {
-    Commands command = Commands.fromCommandString(key);
+    CommandsEnum command = CommandsEnum.fromCommandString(key);
     switch (command) {
       case EMAIL_TYPE_COMMAND, LETTER_TYPE_COMMAND -> arguments.put(key, "true");
       case EMAIL_TEMPLATE_COMMAND -> {
@@ -241,7 +235,7 @@ public class CommandLineParser {
    * @return True if the path is valid, false otherwise
    */
   private boolean isValidOutputDirPath(String value) {
-    return Pattern.matches(OUTPUT_DIR_PATTERN.getPattern(), value);
+    return Pattern.matches(OUTPUT_DIR_PATTERN, value);
   }
 
   /**
@@ -252,7 +246,7 @@ public class CommandLineParser {
    * @return True if the format is valid, false otherwise
    */
   private boolean isInValidTemplateFormat(String value) {
-    return !Pattern.matches(TXT_FILE_PATH_PATTERN.getPattern(), value);
+    return !Pattern.matches(TXT_FILE_PATH_PATTERN, value);
   }
 
   /**
@@ -263,7 +257,7 @@ public class CommandLineParser {
    * @return True if the format is valid, false otherwise
    */
   private boolean isValidCSVFilePath(String value) {
-    return Pattern.matches(CSV_FILE_PATH_PATTERN.getPattern(), value);
+    return Pattern.matches(CSV_FILE_PATH_PATTERN, value);
   }
 
   /**

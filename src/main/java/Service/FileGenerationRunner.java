@@ -1,12 +1,10 @@
-package Generator;
+package Service;
 
 import java.util.List;
 import java.util.Map;
 
-import Processor.CommandLineParser;
-import Processor.PlaceholderReplace;
 import Util.CSVReader;
-import static Enum.Commands.*;
+import static Common.CommandsEnum.*;
 
 public class FileGenerationRunner {
 

@@ -1,4 +1,4 @@
-import Generator.FileGenerationRunner;
+import Service.FileGenerationRunner;
 
 public class MainApplication {
   public static void main(String[] args) {
