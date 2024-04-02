@@ -1,5 +1,6 @@
 package Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import Util.FileOutputWriter;
@@ -12,8 +13,6 @@ public class PlaceholderReplace {
   private final String outputDir;
   private final String isEmail;
   private final String isLetter;
-  private boolean allEmailsSuccessfully = true;
-  private boolean allLettersSuccessfully = true;
 
   public PlaceholderReplace(String isEmail, String emailTemplatePath, String isLetter,
       String letterTemplatePath, String outputDir, List<Map<String, String>> csvData) {
@@ -25,42 +24,34 @@ public class PlaceholderReplace {
     this.isLetter = isLetter;
   }
   public void generateFiles() {
-    if (isEmail != null) {
-      generateEmails();
-      if (allEmailsSuccessfully) System.out.println("All emails were successfully generated.");
-    }
-    if (isLetter != null) {
-      generateLetters();
-      if (allLettersSuccessfully) System.out.println("All letters were successfully generated.");
-    }
+    if (isEmail != null) generateEmails();
+    if (isLetter != null) generateLetters();
   }
   public void generateEmails() {
-    String emailTemplate = TextReader.readTextFileToString(emailTemplatePath);
-    for (Map<String, String> rowData : csvData) {
-      String generatedEmail = replaceEmailPlaceholders(emailTemplate, rowData);
-      String recipientId = rowData.get("first_name") + "_" + rowData.get("last_name") + "_"
-          + "email";
-      try{
+    try {
+      String emailTemplate = TextReader.readTextFileToString(emailTemplatePath);
+      for (Map<String, String> rowData : csvData) {
+        String generatedEmail = replaceEmailPlaceholders(emailTemplate, rowData);
+        String recipientId = rowData.get("first_name") + "_" + rowData.get("last_name") + "_"
+            + "email";
         FileOutputWriter.writeToFile(outputDir, generatedEmail, recipientId);
-      } catch (Exception e) {
-        allEmailsSuccessfully = false;
-        System.err.println("Error generating email for " + recipientId + ": " + e.getMessage());
       }
+    } catch (Exception e){
+      System.err.println("Error generating email: " + e.getMessage());
     }
   }
 
   public void generateLetters() {
-    String letterTemplate = TextReader.readTextFileToString(letterTemplatePath);
-    for (Map<String, String> rowData : csvData) {
-      String generatedLetter = replaceLetterPlaceholders(letterTemplate, rowData);
-      String recipientId = rowData.get("first_name") + "_" + rowData.get("last_name") + "_"
-          + "letter";
-      try {
+    try {
+      String letterTemplate = TextReader.readTextFileToString(letterTemplatePath);
+      for (Map<String, String> rowData : csvData) {
+        String generatedLetter = replaceLetterPlaceholders(letterTemplate, rowData);
+        String recipientId = rowData.get("first_name") + "_" + rowData.get("last_name") + "_"
+            + "letter";
         FileOutputWriter.writeToFile(outputDir, generatedLetter, recipientId);
-      } catch (Exception e) {
-        allLettersSuccessfully = false;
-        System.err.println("Error generating letter for " + recipientId+ ": " + e.getMessage());
       }
+    } catch (Exception e) {
+      System.err.println("Error generating letter: " + e.getMessage());
     }
   }
 
